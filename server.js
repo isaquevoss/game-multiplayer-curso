@@ -17,7 +17,7 @@ sockets.on('connection', (socket) => {
 
     socket.emit('start', game.state)
 
-    sockets.emit('addPlayer', game.state)
+    sockets.emit('stateChanged', game.state)
 
     socket.on('disconnect', () => {
         delete game.state.players[socket.id]
@@ -30,10 +30,6 @@ sockets.on('connection', (socket) => {
         sockets.emit('stateChanged', game.state)
     })
 })
-
-
-
-
 
 server.listen(3000, () => {
     console.log('app is running on 3000 port ')
