@@ -13,12 +13,23 @@ function createGame() {
             y: Math.floor(Math.random() * state.screen.width)
         }
     }
-    function setState(newState){
+    function setState(newState) {
         Object.assign(game.state, newState)
     }
-    
-    function movePlayer(playerId){        
-        this.state.players[playerId].x++
+
+    function movePlayer(command) {
+        if (command.key == 'ArrowRight')
+            this.state.players[command.playerId].x++
+
+        if (command.key == 'ArrowLeft')
+            this.state.players[command.playerId].x--
+
+        if (command.key == 'ArrowUp')
+            this.state.players[command.playerId].y--
+
+        if (command.key == 'ArrowDown')
+            this.state.players[command.playerId].y++
+
     }
 
     return {

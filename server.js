@@ -23,10 +23,10 @@ sockets.on('connection', (socket) => {
         delete game.state.players[socket.id]
     })
     socket.on('movePlayer', (command) => {
-        console.log('jogador moveu comando: '+command)
+        console.log('jogador moveu comando: '+command.key)
         console.log('jogador que moveu: '+socket.id)
-        
-        game.movePlayer(socket.id)
+        command.playerId = socket.id;
+        game.movePlayer(command)
         sockets.emit('stateChanged', game.state)
     })
 })
