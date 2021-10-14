@@ -1,12 +1,13 @@
 function renderScreen(state, ctx) {
     clearScreen(ctx,state)
     
-    for (const key in state.players) {
-        drawPlayer(state.players[key],ctx);    
-    }
     for (const key in state.fruits) {
         drawFruit(state.fruits[key],ctx);    
     }
+    for (const key in state.players) {
+        drawPlayer(state.players[key],ctx);    
+    }
+    
     requestAnimationFrame(() => {
         renderScreen(state,ctx)
     })

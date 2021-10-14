@@ -10,6 +10,8 @@ const server = http.createServer(app)
 const sockets = socketio(server)
 app.use(express.static('public'))
 
+
+
 sockets.on('connection', (socket) => {
     console.log('someone has connected his id is ' + socket.id)
 
@@ -17,14 +19,16 @@ sockets.on('connection', (socket) => {
 
     socket.emit('start', game.state)
 
+    game.start(() => sockets.emit('stateChanged', game.state));
+
     sockets.emit('stateChanged', game.state)
 
     socket.on('disconnect', () => {
         delete game.state.players[socket.id]
     })
     socket.on('movePlayer', (command) => {
-        console.log('jogador moveu comando: '+command.key)
-        console.log('jogador que moveu: '+socket.id)
+        console.log('jogador moveu comando: ' + command.key)
+        console.log('jogador que moveu: ' + socket.id)
         command.playerId = socket.id;
         game.movePlayer(command)
         sockets.emit('stateChanged', game.state)
