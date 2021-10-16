@@ -10,8 +10,6 @@ function createGame() {
     function checkCollision(playerId){
         player = state.players[playerId]
         for (const fruit in state.fruits){
-            console.log(fruit)
-            console.log(player)
             if (player.x == state.fruits[fruit].x  && player.y == state.fruits[fruit].y){
                 delete state.fruits[fruit]
                 player.points++
@@ -50,6 +48,7 @@ function createGame() {
     }
 
     function movePlayer(command) {
+        this.state.players[command.playerId].lastKey = command.key;
         if (command.key == 'ArrowRight')
             this.state.players[command.playerId].x++
 

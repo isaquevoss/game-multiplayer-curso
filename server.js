@@ -10,12 +10,20 @@ const server = http.createServer(app)
 const sockets = socketio(server)
 app.use(express.static('public'))
 
+const intervals = {}
 
-
-sockets.on('connection', (socket) => {
+sockets.on('connection', (socket) => {    
     console.log('someone has connected his id is ' + socket.id)
 
     game.addPlayer(socket.id)//linha que adiciona o jogador 
+
+    intervals[socket.id] = setInterval(() => {
+        game.movePlayer({
+            'playerId': socket.id,
+            'key': game.state.players[socket.id].lastKey
+        })
+        sockets.emit('stateChanged', game.state)
+    }, 500)
 
     socket.emit('start', game.state)
 
@@ -24,8 +32,16 @@ sockets.on('connection', (socket) => {
     sockets.emit('stateChanged', game.state)
 
     socket.on('disconnect', () => {
+        clearInterval(intervals[socket.id])
         delete game.state.players[socket.id]
     })
+
+    socket.on('setName', (data) => {
+        console.log(data);
+        game.state.players[socket.id].name = data.name;
+
+    })
+
     socket.on('movePlayer', (command) => {
         console.log('jogador moveu comando: ' + command.key)
         console.log('jogador que moveu: ' + socket.id)

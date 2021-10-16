@@ -19,11 +19,14 @@
 </head>
 
 <body>
+
+    <input id="player-name"><button id="bt-set-player-name">set my name</button>
     <canvas id="screen" height="20" width="20"></canvas>
 
+    <div id="player-list"></div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="./game.js"></script>    
+    <script src="./game.js"></script>
     <script src="./render-screen.js"></script>
     <script src="./keyboard-listener.js"></script>
 
@@ -31,32 +34,38 @@
         const socket = io();
         const game = createGame();
 
+        function setPlayerName(playerName) {
+            socket.emit('setName', { name: playerName })
+        }
+        setPlayerName('Annonymous')
+
         const canvas = document.getElementById('screen')
         const context = canvas.getContext('2d')
 
         socket.on('stateChanged', (state) => {
-            game.setState(state)
+            game.setState(state);
+            mostraPlayers();
         })
 
         socket.on('start', (state) => {
             game.state = state
             renderScreen(game.state, context)
         })
-       
-        function movePlayer(command){
+
+        function movePlayer(command) {
             // game.movePlayer(socket.id)
-            
+
             console.log(command)
-            socket.emit('movePlayer',command)
+            socket.emit('movePlayer', command)
         }
 
-        const keysValids = ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'];
-        function keyValid(key){
+        const keysValids = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+        function keyValid(key) {
             return keysValids.includes(key);
         }
-        function keydown(event){
+        function keydown(event) {
             if (!keyValid(event.key))
-                return;           
+                return;
             const command = {
                 'playerId': socket.id,
                 'key': event.key
@@ -64,8 +73,22 @@
             movePlayer(command)
         }
 
-        createKeyboardListener(document,keydown)
+        createKeyboardListener(document, keydown)
 
+
+        document.getElementById('bt-set-player-name').addEventListener('click', () => {
+            const inputText = document.getElementById('player-name').value;
+            setPlayerName(inputText);
+        })
+
+        function mostraPlayers() {
+            const divPLayers = document.getElementById('player-list');
+            var playersHtml = '';
+            for (item in game.state.players) {
+                playersHtml = playersHtml + game.state.players[item].name + 'Pontos: ' + game.state.players[item].points + '<br />'
+            }
+            divPLayers.innerHTML = playersHtml
+        }
 
     </script>
 </body>

@@ -9,7 +9,7 @@ function renderScreen(state, ctx) {
     }
     
     requestAnimationFrame(() => {
-        renderScreen(state,ctx)
+        renderScreen(state,ctx)        
     })
 }
 
