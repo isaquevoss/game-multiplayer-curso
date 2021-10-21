@@ -7,10 +7,10 @@ function createGame() {
             'width': 20
         }
     }
-    function checkCollision(playerId){
+    function checkCollision(playerId) {
         player = state.players[playerId]
-        for (const fruit in state.fruits){
-            if (player.x == state.fruits[fruit].x  && player.y == state.fruits[fruit].y){
+        for (const fruit in state.fruits) {
+            if (player.x == state.fruits[fruit].x && player.y == state.fruits[fruit].y) {
                 delete state.fruits[fruit]
                 player.points++
                 console.log('deletou')
@@ -24,7 +24,7 @@ function createGame() {
             if (Object.keys(state.fruits).length < 15)
                 addFruit(Math.floor(Math.random() * 13543435524))
             observer(state);
-        }, 3000)
+        }, 1500) 
     }
 
     function addPlayer(playerId) {
@@ -50,16 +50,28 @@ function createGame() {
     function movePlayer(command) {
         this.state.players[command.playerId].lastKey = command.key;
         if (command.key == 'ArrowRight')
-            this.state.players[command.playerId].x++
+            if (this.state.players[command.playerId].x >= this.state.screen.width - 1)
+                this.state.players[command.playerId].x = 0
+            else
+                this.state.players[command.playerId].x++
 
         if (command.key == 'ArrowLeft')
-            this.state.players[command.playerId].x--
-
-        if (command.key == 'ArrowUp')
-            this.state.players[command.playerId].y--
+            if (this.state.players[command.playerId].x <= 0)
+                this.state.players[command.playerId].x = this.state.screen.width - 1
+            else
+                this.state.players[command.playerId].x--
 
         if (command.key == 'ArrowDown')
-            this.state.players[command.playerId].y++
+            if (this.state.players[command.playerId].y >= this.state.screen.height - 1)
+                this.state.players[command.playerId].y = 0
+            else
+                this.state.players[command.playerId].y++
+
+        if (command.key == 'ArrowUp')
+            if (this.state.players[command.playerId].y <= 0)
+                this.state.players[command.playerId].y = this.state.screen.height - 1
+            else
+                this.state.players[command.playerId].y--
 
         checkCollision(command.playerId);
     }

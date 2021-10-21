@@ -17,13 +17,13 @@ sockets.on('connection', (socket) => {
 
     game.addPlayer(socket.id)//linha que adiciona o jogador 
 
-    intervals[socket.id] = setInterval(() => {
-        game.movePlayer({
-            'playerId': socket.id,
-            'key': game.state.players[socket.id].lastKey
-        })
-        sockets.emit('stateChanged', game.state)
-    }, 500)
+    // intervals[socket.id] = setInterval(() => {
+    //     game.movePlayer({
+    //         'playerId': socket.id,
+    //         'key': game.state.players[socket.id].lastKey
+    //     })
+    //     sockets.emit('stateChanged', game.state)
+    // }, 200)
 
     socket.emit('start', game.state)
 
@@ -45,6 +45,11 @@ sockets.on('connection', (socket) => {
     socket.on('movePlayer', (command) => {
         console.log('jogador moveu comando: ' + command.key)
         console.log('jogador que moveu: ' + socket.id)
+        // setTimeout(() => {
+        //     command.playerId = socket.id;
+        //     game.movePlayer(command)
+        //     sockets.emit('stateChanged', game.state)    
+        // },140)
         command.playerId = socket.id;
         game.movePlayer(command)
         sockets.emit('stateChanged', game.state)
