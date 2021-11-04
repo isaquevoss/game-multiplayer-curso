@@ -1,3 +1,4 @@
+const { executionAsyncResource } = require('async_hooks');
 const express = require('express')
 const http = require('http')
 const socketio = require('socket.io')
@@ -12,24 +13,34 @@ app.use(express.static('public'))
 
 const intervals = {}
 
-sockets.on('connection', (socket) => {    
+
+socketConnectionFunction = (socket) => {
     console.log('someone has connected his id is ' + socket.id)
 
     game.addPlayer(socket.id)//linha que adiciona o jogador 
 
-    // intervals[socket.id] = setInterval(() => {
-    //     game.movePlayer({
-    //         'playerId': socket.id,
-    //         'key': game.state.players[socket.id].lastKey
-    //     })
-    //     sockets.emit('stateChanged', game.state)
-    // }, 200)
+    intervals[socket.id] = setInterval(() => {
+        game.movePlayer({
+            'playerId': socket.id,
+            'key': game.state.players[socket.id].lastKey
+        })
+        sockets.emit('stateChanged', game.state)
+    }, 500)
 
     socket.emit('start', game.state)
 
     game.start(() => sockets.emit('stateChanged', game.state));
 
     sockets.emit('stateChanged', game.state)
+
+    emitSocketFruitHasDeleted = function (fruitId) {
+    }
+    emitSocketBeforeFruitDeleted = function (fruit) {
+        socket.emit('fruitBeforeDelete', fruit)
+    }
+
+    game.setAfterDeleteFruit(emitSocketFruitHasDeleted);
+    game.setBeforeDeleteFruit(emitSocketBeforeFruitDeleted);
 
     socket.on('disconnect', () => {
         clearInterval(intervals[socket.id])
@@ -54,7 +65,9 @@ sockets.on('connection', (socket) => {
         game.movePlayer(command)
         sockets.emit('stateChanged', game.state)
     })
-})
+}
+
+sockets.on('connection', socketConnectionFunction)
 
 server.listen(3000, () => {
     console.log('app is running on 3000 port ')

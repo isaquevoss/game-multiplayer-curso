@@ -7,13 +7,27 @@ function createGame() {
             'width': 20
         }
     }
+    onBeforeDeleteFruit = null;
+    onAfterDeleteFruit = null;
+
+    function setBeforeDeleteFruit(event) {
+        onBeforeDeleteFruit = event;
+    }
+    function setAfterDeleteFruit(event) {
+        onAfterDeleteFruit = event;
+    }
+
     function checkCollision(playerId) {
         player = state.players[playerId]
         for (const fruit in state.fruits) {
-            if (player.x == state.fruits[fruit].x && player.y == state.fruits[fruit].y) {
+            if (player.x == state.fruits[fruit].x && player.y == state.fruits[fruit].y) {                
+                if (onBeforeDeleteFruit)
+                    onBeforeDeleteFruit(state.fruits[fruit]);
                 delete state.fruits[fruit]
+                if (onAfterDeleteFruit)
+                    onAfterDeleteFruit(fruit);
+
                 player.points++
-                console.log('deletou')
             }
 
         }
@@ -21,10 +35,10 @@ function createGame() {
 
     function start(observer) {
         setInterval(() => {
-            if (Object.keys(state.fruits).length < 15)
+            if (Object.keys(state.fruits).length < 111111111111)
                 addFruit(Math.floor(Math.random() * 13543435524))
             observer(state);
-        }, 1500) 
+        }, 1500)
     }
 
     function addPlayer(playerId) {
@@ -77,7 +91,7 @@ function createGame() {
     }
 
     return {
-        state, addPlayer, movePlayer, setState, addFruit, start
+        setAfterDeleteFruit, setBeforeDeleteFruit, state, addPlayer, movePlayer, setState, addFruit, start
     }
 }
 
